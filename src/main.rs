@@ -6,10 +6,12 @@ extern crate serde;
 extern crate serde_json;
 
 use std::{
-  io::{self, BufRead, BufReader},
-  path::Path,
-  fs::File,
+  io::{self, BufRead, BufReader}, 
+  process::exit,
+  path::Path, 
+  fs::File 
 };
+
 use serde::{Deserialize, Serialize};
 use structs::{WordsetInfo};
 use constants::{TITLE};
@@ -75,13 +77,11 @@ fn main_menu() -> io::Result<()> {
       "start" | "s" => start_game(),
       "help"  | "h" => help(),
       "quit"  | "q" => {
-        println!("{}", "Exiting...".yellow());
-        break;
+        println!("\n{}", "Exiting...".yellow());
+        exit(0);
       },
       _ => println!("{}", "Invalid option, type Help or h for help".red()),
     }
-
-    break;
   }
 
   fn display_title() -> io::Result<()> {
@@ -95,8 +95,6 @@ fn main_menu() -> io::Result<()> {
 
     Ok(())
   }
-
-  Ok(())
 }
 
 fn start_game() {
