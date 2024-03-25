@@ -1,10 +1,10 @@
 {
   "1": {
-    "name":"Words from the Dictionary", 
-    "path":"resources/filtered-words.txt"
+    "name": "Words from the Dictionary",
+    "path": "resources/filtered-words.txt"
   },
   "2": {
-    "name":"Gen 1 Pokemon", 
-    "path":"resources/gen_1_pokemon.txt"
+    "name": "Gen 1 Pokemon",
+    "path": "resources/gen_1_pokemon.txt"
   }
 }

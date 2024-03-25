@@ -32,16 +32,16 @@ pub fn main_menu() -> io::Result<()> {
       _ => println!("{}", "Invalid option, type Help or h for help".red()),
     }
   }
+}
 
-  fn display_title() -> io::Result<()> {
-    let file: File = File::open(Path::new(TITLE))?;
-    let reader: BufReader<File> = BufReader::new(file);
+fn display_title() -> io::Result<()> {
+  let file: File = File::open(Path::new(TITLE))?;
+  let reader: BufReader<File> = BufReader::new(file);
 
-    // Prints Hangman ASCII art
-    for line in reader.lines() {
-      println!("{}", line?.magenta());
-    }
-
-    Ok(())
+  // Prints Hangman ASCII art
+  for line in reader.lines() {
+    println!("{}", line?.magenta());
   }
+
+  Ok(())
 }
