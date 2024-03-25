@@ -68,15 +68,17 @@ fn main_menu() -> io::Result<()> {
   
   loop {
     let mut choice: String = String::new();
+
     io::stdin().read_line(&mut choice)
       .expect("Failed to read line");
 
     choice = choice.trim().to_lowercase();
 
     match choice.as_str() {
-      "start" | "s" => start_game(),
-      "help"  | "h" => help(),
-      "quit"  | "q" => {
+      "start"     | "s" => start_game(),
+      "help"      | "h" => wordsets_menu(),
+      "wordsets"  | "w" => help_menu(),
+      "quit"      | "q" => {
         println!("\n{}", "Exiting...".yellow());
         exit(0);
       },
@@ -101,7 +103,11 @@ fn start_game() {
 
 }
 
-fn help() {
+fn wordsets_menu() {
+
+}
+
+fn help_menu() {
   clear_terminal();
   
   // ================================================================================
