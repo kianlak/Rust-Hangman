@@ -6,28 +6,24 @@ use std::collections::HashMap;
 use std::fs;
 use structs::{WordsetInfo};
 
+// Change the return type from io::Result<()> to io::Result<Vec<WordsetInfo>>
+pub fn get_all_wordsets() -> io::Result<Vec<WordsetInfo>> {
+    let file_content: String = fs::read_to_string(WORDSETS_PATH)?;
 
-pub fn get_wordsets() -> io::Result<()> {
-  let file_content: String = fs::read_to_string(WORDSETS_PATH)?;
-
-  let parsed: Result<HashMap<String, WordsetInfo>, serde_json::Error> = serde_json::from_str(&file_content);
+    // Attempt to parse the JSON content to a HashMap
+    let parsed: Result<HashMap<String, WordsetInfo>, serde_json::Error> = serde_json::from_str(&file_content);
 
     match parsed {
         Ok(data) => {
-            // Iterate over the HashMap, converting the keys to integers
-            for (key, value) in data {
-                let key_as_number: Result<i32, _> = key.parse();
-                match key_as_number {
-                    Ok(num) => println!("{}. name: {}, path: {}", num, value.name, value.path),
-                    Err(_) => println!("Error: Key '{}' is not a valid number.", key),
-                }
-            }
+            // Instead of printing, collect the values into a Vec<WordsetInfo>
+            let wordsets: Vec<WordsetInfo> = data.into_iter().map(|(_key, value)| value).collect();
+            // Return the vector
+            Ok(wordsets)
         },
         Err(e) => {
             println!("Failed to parse JSON: {}", e);
-            return Err(io::Error::new(io::ErrorKind::Other, "Failed to parse JSON"));
+            // Return an error if parsing fails
+            Err(io::Error::new(io::ErrorKind::Other, "Failed to parse JSON"))
         },
     }
-
-    Ok(())
 }

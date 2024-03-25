@@ -15,7 +15,7 @@ use std::{
 use serde::{Deserialize, Serialize};
 use structs::{WordsetInfo};
 use constants::{TITLE};
-use data_access::{get_wordsets};
+use data_access::{get_all_wordsets};
 use colored::*;
 
 
@@ -62,7 +62,7 @@ fn main_menu() -> io::Result<()> {
   clear_terminal();
   display_title()?;
   
-  println!("Welcome to Hangman {}", "vAlpha".blue());
+  println!("Welcome to Hangman {}", "v0.1".blue());
   println!("Please select your option\n");
   println!("• Start\n• Wordsets\n• Help\n• Quit");
   
@@ -76,8 +76,8 @@ fn main_menu() -> io::Result<()> {
 
     match choice.as_str() {
       "start"     | "s" => start_game(),
-      "help"      | "h" => wordsets_menu(),
-      "wordsets"  | "w" => help_menu(),
+      "wordsets"  | "w" => wordsets_menu(),
+      "help"      | "h" => help_menu(),
       "quit"      | "q" => {
         println!("\n{}", "Exiting...".yellow());
         exit(0);
@@ -104,7 +104,60 @@ fn start_game() {
 }
 
 fn wordsets_menu() {
+  clear_terminal();
 
+  println!("• View Wordsets\n• Load Wordset\n• Delete Wordsets");
+  println!("\nPress the {} key to go back to the main menu", "Enter".yellow());
+
+  loop {
+    let mut choice: String = String::new();
+
+    io::stdin().read_line(&mut choice)
+      .expect("Failed to read line");
+
+    choice = choice.trim().to_lowercase();
+    
+    if choice.trim().is_empty() {
+      break;
+    }
+    else {
+      match choice.as_str() {
+        "view"   | "v" => view_wordsets(),
+        "load"   | "l" => {},
+        "delete" | "d" => {},
+        _ => {}    
+      }
+    }
+  }
+
+  let _ = main_menu();
+
+  fn view_wordsets() {
+    clear_terminal();
+
+    let wordsets: Result<Vec<WordsetInfo>, io::Error> = get_all_wordsets();
+    
+    println!("Your Loaded Wordsets:");
+
+    match wordsets {
+      Ok(wordsets) => {
+        for(index, wordset) in wordsets.iter().enumerate() {
+          let index_str = format!("{}.", index + 1).to_string();
+          
+          println!("{} {}, \n   |_ Path: {}", 
+            index_str.magenta(), 
+            wordset.name.green(), 
+            wordset.path.yellow()
+          );
+        }
+      },
+      Err(e) => {
+        println!("{} {}", "Failed to get wordsets: ".red(), e);
+      }
+    }
+
+    println!("\nPress the {} key to go back to the main menu", "Enter".yellow());
+  }
 }
 
 fn help_menu() {
@@ -118,6 +171,11 @@ fn help_menu() {
   println!(" {} : List of helpful commands", "Help | H".yellow());
   println!(" {} : Upload or remove wordsets", "Wordsets | W".yellow());
   println!(" {} : Quits the game", "Quit | Q".yellow());
+
+  println!("\n{}", "Wordsets Menu Commands:".cyan());
+  println!(" {} : View all loaded wordsets", "View | V".yellow());
+  println!(" {} : Load a new wordset into game", "Load | L".yellow());
+  println!(" {} : Delete a wordset from game", "Delete | D".yellow());
 
   println!("\n{}", "Universal Commands:".cyan());
   println!(" {} : Quits the game at any point", "Ctrl + C".yellow());
