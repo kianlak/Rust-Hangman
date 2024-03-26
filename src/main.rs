@@ -8,6 +8,6 @@ extern crate serde_json;
 
 use menu_options::menu_shared::go_to_main_menu;
 
-fn main() { 
+fn main() {
   go_to_main_menu();
 }

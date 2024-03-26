@@ -26,7 +26,7 @@ pub fn wordsets_menu() {
       match choice.as_str() {
         "viewwordsets"    | "view"    | "v" => view_wordsets(),
         "loadwordsets"    | "load"    | "l" => load_wordsets(),
-        "deletewordsets"  | "delete"  | "d" => {},
+        "deletewordsets"  | "delete"  | "d" => delete_wordsets(),
         _ => {
           println!("{} {} {}", 
             "\nInvalid input, go to help for more info.\nPress".red(),
@@ -44,12 +44,12 @@ fn view_wordsets() {
 
   let wordsets: Result<Vec<WordsetInfo>, io::Error> = get_all_wordsets();
   
-  println!("Your Loaded Wordsets:");
+  println!("{}", "Your Loaded Wordsets:".blue());
 
   match wordsets {
     Ok(wordsets) => {
       for(index, wordset) in wordsets.iter().enumerate() {
-        let index_str = format!("{}.", index + 1).to_string();
+        let index_str: String = format!("{}.", index + 1).to_string();
         
         println!("{} {}, \n   |_ Path: {}", 
           index_str.magenta(), 
@@ -104,8 +104,53 @@ fn load_wordsets() {
 
       if input.trim().is_empty() {
         go_to_main_menu();
-        break;
       }
+    }
+  }
+}
+
+fn delete_wordsets() {
+  clear_terminal();
+
+  let wordsets: Result<Vec<WordsetInfo>, io::Error> = get_all_wordsets();
+
+  let mut max_index = 0; 
+  
+  println!("{}", "Select the number corresponding to the wordset you want to remove:".blue());
+
+  match wordsets {
+    Ok(wordsets) => {
+      for (index, wordset) in wordsets.iter().enumerate() {
+        let index_str: String = format!("{}.", index + 1).to_string();
+        println!("{} {}, \n   |_ Path: {}", 
+          index_str.magenta(), 
+          wordset.name.green(), 
+          wordset.path.yellow()
+        );
+        max_index = index + 1;
+      }
+    },
+    Err(e) => {
+      println!("{} {}", "Failed to get wordsets: ".red(), e);
+    }
+  }
+
+  loop {
+    let mut input: String = String::new();
+
+    
+    io::stdout().flush().unwrap();
+    io::stdin().read_line(&mut input)
+      .expect("Failed to read line");
+  
+    let input: &str = input.trim();
+    
+    if input.is_empty() {
+      go_to_main_menu();
+    }
+    
+    if is_in_range(input, max_index) {
+      
     }
   }
 }
@@ -158,4 +203,53 @@ fn register_wordset_name() -> String {
     .expect("Failed to read line");
 
   return wordset_name;
+}
+
+fn is_in_range(input: &str, size: usize) -> bool {
+  if !is_integer(input) {
+    return false;
+  }
+
+  match input.parse::<usize>() {
+    Ok(number) => {
+      if number <= size {        
+        return true;
+      } 
+      else {
+        println!("{} {} {}.", 
+          number.to_string().yellow(),
+          "is out of range, please enter a number between 1 and".red(),
+          size.to_string().yellow()
+        );
+
+        return false;
+      }
+    },
+    Err(_) => {
+      println!("{}", "Something unexpected happened".red());
+
+      return false;
+    }
+  }
+}
+
+fn is_integer(input: &str) -> bool {
+  match input.parse::<i32>() {
+    Ok(num) => {
+      if num <= 0 {
+        println!("{}", "That is not a proper index, please try again.".red());
+        println!("You can also press {} to go back to the main menu\n", "Enter".yellow());
+
+        return false;
+      }
+
+      return true;
+    }
+    Err(_) => {
+      println!("{}", "That is not an integer, please try again".red());
+      println!("You can also press {} to go back to the main menu\n", "Enter".yellow());
+
+      return false;
+    }
+  }
 }
