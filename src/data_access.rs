@@ -4,17 +4,15 @@ use crate::structs;
 
 use std::{fs::File, io};
 use std::collections::HashMap;
-use std::fs;
+use std::fs::{self};
 use colored::Colorize;
 use serde_json::{Value, Map};
 use std::path::Path;
 use structs::WordsetInfo;
 
-// Returns all the wordsets that are loaded into the game
 pub fn get_all_wordsets() -> io::Result<Vec<WordsetInfo>> {
   let file_content: String = fs::read_to_string(WORDSETS_PATH)?;
 
-  // Attempt to parse the JSON content to a HashMap
   let parsed: Result<HashMap<String, WordsetInfo>, serde_json::Error> = serde_json::from_str(&file_content);
 
   match parsed {
@@ -40,7 +38,6 @@ pub fn check_if_txt_exists(file_name: &str) -> (String, bool) {
   }
 }
 
-
 pub fn add_wordset(name: &str, path: &str) -> io::Result<()> {
   let file_contents: String = fs::read_to_string(WORDSETS_PATH)?;
   let mut data: Map<String, Value> = serde_json::from_str(&file_contents)?;
@@ -63,6 +60,26 @@ pub fn add_wordset(name: &str, path: &str) -> io::Result<()> {
   println!("{} {}",
     success_file_name.green(),
     "has been loaded".green()
+  );
+
+  Ok(())
+}
+
+pub fn delete_by_key(key: &str) -> std::io::Result<(), >{
+  let data: String = fs::read_to_string(WORDSETS_PATH)?;
+
+  let mut map: Map<String, Value> = serde_json::from_str(&data)?;
+
+  map.remove(key);
+
+  let modified_json = serde_json::to_string_pretty(&map)?;
+
+  fs::write(WORDSETS_PATH, modified_json)?;
+
+  println!("{} {} {}",
+    "Wordset".green(),
+    "3".magenta(),
+    "has been removed".green()
   );
 
   Ok(())

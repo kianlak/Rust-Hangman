@@ -1,4 +1,4 @@
-use crate::{data_access::{add_wordset, check_if_txt_exists, get_all_wordsets}, structs::WordsetInfo};
+use crate::{data_access::{add_wordset, check_if_txt_exists, delete_by_key, get_all_wordsets}, structs::WordsetInfo};
 use colored::*;
 use std::io::{self, Write};
 
@@ -137,7 +137,6 @@ fn delete_wordsets() {
 
   loop {
     let mut input: String = String::new();
-
     
     io::stdout().flush().unwrap();
     io::stdin().read_line(&mut input)
@@ -150,7 +149,23 @@ fn delete_wordsets() {
     }
     
     if is_in_range(input, max_index) {
-      
+      let _ = delete_by_key(input);
+      println!("\nPress the {} key to go back to the main menu", "Enter".yellow());
+      break;
+    }
+  }
+
+  loop{
+    let mut input: String = String::new();
+    
+    io::stdout().flush().unwrap();
+    io::stdin().read_line(&mut input)
+      .expect("Failed to read line");
+  
+    let input: &str = input.trim();
+    
+    if input.is_empty() {
+      go_to_main_menu();
     }
   }
 }
