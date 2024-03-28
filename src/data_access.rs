@@ -1,4 +1,4 @@
-use std::io::Write;
+use std::io::{Read, Write};
 use crate::constants::WORDSETS_PATH;
 use crate::structs;
 
@@ -6,6 +6,8 @@ use std::{fs::File, io};
 use std::collections::HashMap;
 use std::fs::{self};
 use colored::Colorize;
+use rand::rngs::ThreadRng;
+use rand::Rng;
 use serde_json::{Value, Map};
 use std::path::Path;
 use structs::WordsetInfo;
@@ -78,9 +80,51 @@ pub fn delete_by_key(key: &str) -> std::io::Result<(), >{
 
   println!("{} {} {}",
     "Wordset".green(),
-    "3".magenta(),
+    key.magenta(),
     "has been removed".green()
   );
 
   Ok(())
+}
+
+pub fn collect_all_wordsets() -> Result<HashMap<String, WordsetInfo>, io::Error>{
+  let mut file: File = File::open(WORDSETS_PATH)?;
+
+  let mut contents: String = String::new();
+  file.read_to_string(&mut contents)?;
+
+  let wordsets: HashMap<String, WordsetInfo> = serde_json::from_str(&contents)?;
+
+  Ok(wordsets)
+}
+
+pub fn access_wordset_by_key(key: &str) -> Result<String, String> {
+  let data: String = match fs::read_to_string(WORDSETS_PATH) {
+      Ok(contents) => contents,
+      Err(_) => return Err("Failed to read file".to_string()),
+  };
+
+  let result: HashMap<String, WordsetInfo> = match serde_json::from_str(&data) {
+      Ok(map) => map,
+      Err(_) => return Err("Error parsing JSON".to_string()),
+  };
+
+  match result.get(key) {
+      Some(item) => Ok(item.path.clone()),
+      None => Err("Key not found".to_string()),
+  }
+}
+
+pub fn select_random_word(file_path: &str) -> Result<String, std::io::Error> {
+  let contents: String = fs::read_to_string(file_path)?;
+  let words: Vec<&str> = contents.lines().collect();
+  
+  if words.is_empty() {
+    return Err(std::io::Error::new(std::io::ErrorKind::NotFound, "The file is empty or does not contain any lines"));
+  }
+
+  let mut rng: ThreadRng = rand::thread_rng();
+  let random_index: usize = rng.gen_range(0..words.len());
+
+  Ok(words[random_index].to_string())
 }

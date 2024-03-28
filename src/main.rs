@@ -2,6 +2,7 @@ mod structs;
 mod data_access;
 mod constants;
 mod menu_options;
+mod game;
 
 extern crate serde;
 extern crate serde_json;

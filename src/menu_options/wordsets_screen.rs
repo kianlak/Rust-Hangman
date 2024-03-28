@@ -1,6 +1,6 @@
-use crate::{data_access::{add_wordset, check_if_txt_exists, delete_by_key, get_all_wordsets}, structs::WordsetInfo};
+use crate::{data_access::{add_wordset, check_if_txt_exists, collect_all_wordsets, delete_by_key, get_all_wordsets}, structs::WordsetInfo};
 use colored::*;
-use std::io::{self, Write};
+use std::{collections::HashMap, io::{self, Write}};
 
 use super::menu_shared::{clear_terminal, go_to_main_menu};
 
@@ -26,7 +26,7 @@ pub fn wordsets_menu() {
       match choice.as_str() {
         "viewwordsets"    | "view"    | "v" => view_wordsets(),
         "loadwordsets"    | "load"    | "l" => load_wordsets(),
-        "deletewordsets"  | "delete"  | "d" => delete_wordsets(),
+        "deletewordsets"  | "delete"  | "d" => delete_wordsets(),   
         _ => {
           println!("{} {} {}", 
             "\nInvalid input, go to help for more info.\nPress".red(),
@@ -112,22 +112,30 @@ fn load_wordsets() {
 fn delete_wordsets() {
   clear_terminal();
 
-  let wordsets: Result<Vec<WordsetInfo>, io::Error> = get_all_wordsets();
+  let wordsets: Result<HashMap<String, WordsetInfo>, io::Error> = collect_all_wordsets();
+  let mut max_index: usize = 0; 
 
-  let mut max_index = 0; 
-  
   println!("{}", "Select the number corresponding to the wordset you want to remove:".blue());
 
   match wordsets {
     Ok(wordsets) => {
-      for (index, wordset) in wordsets.iter().enumerate() {
-        let index_str: String = format!("{}.", index + 1).to_string();
+      for (key, wordset) in wordsets.iter() {
+        match key.parse::<usize>() {
+          Ok(parsed_number) => {
+            if parsed_number > max_index {
+              max_index = parsed_number;
+            }
+          },
+          Err(e) => {
+            println!("Failed to parse the string into a number: {:?}", e);
+          }
+      }
+
         println!("{} {}, \n   |_ Path: {}", 
-          index_str.magenta(), 
+          key.magenta(), 
           wordset.name.green(), 
           wordset.path.yellow()
         );
-        max_index = index + 1;
       }
     },
     Err(e) => {

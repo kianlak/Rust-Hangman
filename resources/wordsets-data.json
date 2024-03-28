@@ -1,10 +1,14 @@
 {
   "1": {
-    "name": "Words from the Dictionary",
-    "path": "resources/filtered-words.txt"
+    "name": "Dictionary Words",
+    "path": "resources/wordsets/filtered_dictionary_words.txt"
   },
   "2": {
-    "name": "Gen 1 Pokemon",
-    "path": "resources/gen_1_pokemon.txt"
+    "name": "Gen 1 Pokemons",
+    "path": "resources/wordsets/gen_1_pokemon.txt"
+  },
+  "3": {
+    "name": "Smash Bros Characters",
+    "path": "resources/wordsets/smash_bros.txt"
   }
 }

@@ -8,7 +8,7 @@ pub fn main_menu() -> io::Result<()> {
   clear_terminal();
   display_title()?;
   
-  println!("Welcome to Hangman {}", "v0.1".blue());
+  println!("Welcome to Hangman {}", "v1.0".blue());
   println!("Please select your option\n");
   println!("• Start\n• Wordsets\n• Help\n• Quit");
   
