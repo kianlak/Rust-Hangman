@@ -18,7 +18,7 @@ Falco
 Fox
 Ganondorf
 Greninja
-The Ice Climbers
+Ice Climbers
 Ike
 Inkling
 Incineroar
@@ -68,7 +68,7 @@ Simon
 Snake
 Sonic
 Terry Bogard
-The Hero
+Hero
 Toon Link
 Villager
 Wario

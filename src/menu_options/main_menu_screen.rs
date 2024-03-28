@@ -40,7 +40,7 @@ fn display_title() -> io::Result<()> {
 
   // Prints Hangman ASCII art
   for line in reader.lines() {
-    println!("{}", line?.magenta());
+    println!("{}", line?.bright_magenta());
   }
 
   Ok(())
